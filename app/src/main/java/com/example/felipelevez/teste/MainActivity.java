@@ -32,9 +32,9 @@ public class MainActivity extends AppCompatActivity {
         ImageView iv_listaVazia = findViewById(R.id.image_lista_vazia);
         TextView tv_listaVazia = findViewById(R.id.tv_lista_vazia);
 
-        UserDAO bd = new UserDAO(this);
-        ArrayList<User> users = bd.getAll();
-        bd.close();
+        UserDAO userDao = new UserDAO(this);
+        ArrayList<User> users = userDao.getAll();
+        userDao.close();
 
         mostraImagemListaVazia(iv_listaVazia,tv_listaVazia, (users.isEmpty())?View.VISIBLE:View.INVISIBLE);
 
