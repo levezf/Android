@@ -41,7 +41,7 @@
         android:layout_gravity="center"
         android:visibility="invisible"
         android:textColor="@android:color/white"
-        android:text="@string/a_lista_est_vazia"/>
+        android:text="@string/msg_a_lista_est_vazia"/>
 
 
     <include layout="@layout/content_main" />

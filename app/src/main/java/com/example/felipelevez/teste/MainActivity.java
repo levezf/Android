@@ -6,17 +6,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.felipelevez.teste.database.UserDAO;
 import com.example.felipelevez.teste.models.User;
@@ -32,14 +29,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        ImageView iv = findViewById(R.id.image_lista_vazia);
-        TextView tv = findViewById(R.id.tv_lista_vazia);
+        ImageView iv_listaVazia = findViewById(R.id.image_lista_vazia);
+        TextView tv_listaVazia = findViewById(R.id.tv_lista_vazia);
 
         UserDAO bd = new UserDAO(this);
         ArrayList<User> users = bd.getAll();
         bd.close();
 
-        mostraImagemListaVazia(iv,tv, (users.isEmpty())?View.VISIBLE:View.INVISIBLE);
+        mostraImagemListaVazia(iv_listaVazia,tv_listaVazia, (users.isEmpty())?View.VISIBLE:View.INVISIBLE);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -55,8 +52,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                chamaUserActivity("insercao", -1);
+                chamaUserActivity(new User(null,null,null));
             }
         });
 
@@ -66,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 User user = (User) parent.getAdapter().getItem(position); // o filtro altera a ordem dos elementos, precisa disso pra pegar o elemento correto.
-                chamaUserActivity("edicao_delete", (user.getId()));
+                chamaUserActivity(user);
             }
         });
 
@@ -78,19 +74,19 @@ public class MainActivity extends AppCompatActivity {
         tv.setVisibility(visible);
     }
 
-    private void chamaUserActivity(String modo, int id) {
+    private void chamaUserActivity(User user) {
         Intent intent = new Intent(getApplicationContext(), UserActivity.class);
-        intent.putExtra("modo", modo);
-        intent.putExtra("id_user", id);
+        intent.putExtra("user", user);
         startActivity(intent);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem menuPesquisa = menu.findItem(R.id.action_pesquisar);
         SearchView sv = (SearchView) menuPesquisa.getActionView();
-        sv.setQueryHint("Pesquisar");
+        sv.setQueryHint(getString(R.string.msg_pesquisar));
 
 
         /************************   deixar a barra de busca match_parent no modo landscape  **********************************/

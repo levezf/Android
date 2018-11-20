@@ -21,24 +21,23 @@ import com.example.felipelevez.teste.utils.EditTextUtils;
 public class UserActivity extends AppCompatActivity {
 
     private String modo;
-
-    private int id;
     private EditText phone = null;
     private EditText email = null ;
     private EditText name= null;
-    private UserDAO bd;
+    private UserDAO userDAO;
     private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
         if(savedInstanceState!=null){
             modo = savedInstanceState.getString("modo");
-            id  = savedInstanceState.getInt("id");
+            user = savedInstanceState.getParcelable("user");
         }else{
-            modo= getIntent().getStringExtra("modo");
-            id = getIntent().getIntExtra("id_user", -1);
+            user = getIntent().getParcelableExtra("user");
+            modo = (user.getId() == -1)?"insercao":"modificar";
         }
 
         setContentView(R.layout.activity_user);
@@ -52,41 +51,37 @@ public class UserActivity extends AppCompatActivity {
         name = findViewById(R.id.et_nome);
         email = findViewById(R.id.et_email);
         phone = findViewById(R.id.et_telefone);
-        phone.addTextChangedListener(new PhoneNumberFormattingTextWatcher("BR"));
+        phone.addTextChangedListener(new PhoneNumberFormattingTextWatcher(getString(R.string.codigo_pais)));
 
         if(modo.equals("insercao")){
-            EditTextUtils.setEnableEditText(name, email, phone, true);
+            setEnableEditText(name, email, phone, true);
 
         }else{
-            bd =  new UserDAO(this);
-            user = bd.get(id);
             name.setText(user.getName());
             email.setText(user.getEmail());
             phone.setText(user.getPhone());
-            bd.close();
-
-            EditTextUtils.setEnableEditText(name, email, phone, (modo.equals("edicao")));
+            setEnableEditText(name, email, phone, (modo.equals("edicao")));
         }
 
         btn_salvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!EditTextUtils.temCamposNulos(name, phone,email, true) && EditTextUtils.phoneEhValido(phone) && EditTextUtils.emailEhValido(email)){
+                if (!temCamposNulos(name, phone,email, true) && EditTextUtils.phoneEhValido(phone) && EditTextUtils.emailEhValido(email)){
                     if (name.isEnabled()) {
-                        EditTextUtils.setEnableEditText(name, email, phone, false);
+                        setEnableEditText(name, email, phone, false);
 
-                        bd =  new UserDAO(getApplicationContext());
+                        userDAO =  new UserDAO(getApplicationContext());
                         if (modo.equals("insercao")) {
-                            bd.insert(new User(name.getText().toString(), email.getText().toString(), phone.getText().toString()));
+                            userDAO.insert(new User(name.getText().toString(), email.getText().toString(), phone.getText().toString()));
                         } else {
-                            bd.update(new User(id, name.getText().toString(), email.getText().toString(), phone.getText().toString()));
+                            userDAO.update(new User(user.getId(), name.getText().toString(), email.getText().toString(), phone.getText().toString()));
                         }
-                        bd.close();
+                        userDAO.close();
 
                     }
                     voltaInicio();
                 }else{
-                    Snackbar.make(findViewById(R.id.backgroud_user_layout), "Por favor, preencha todos os campos", Snackbar.LENGTH_LONG)
+                    Snackbar.make(findViewById(R.id.backgroud_user_layout), R.string.msg_preencher_todos_os_campos, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
             }
@@ -104,7 +99,7 @@ public class UserActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("modo", modo);
-        outState.putInt("id", id);
+        outState.putParcelable("user", user);
     }
 
     @Override
@@ -112,14 +107,18 @@ public class UserActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_apagar) {
-            if(!modo.equals("insercao") && !EditTextUtils.temCamposNulos(name, phone, email, false)){
-                bd.delete(user);
+            if(!modo.equals("insercao") && !temCamposNulos(name, phone, email, false)){
+                userDAO =  new UserDAO(getApplicationContext());
+                userDAO.delete(user);
+                userDAO.close();
             }
             voltaInicio();
         }
         if(id == R.id.action_editar){
-            EditTextUtils.setEnableEditText(name, email, phone, true);
-            modo = "edicao";
+            if(!modo.equals("insercao")) {
+                setEnableEditText(name, email, phone, true);
+                modo = "edicao";
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -128,5 +127,30 @@ public class UserActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_user, menu);
         return true;
+    }
+    private void setEnableEditText(EditText e1, EditText e2, EditText e3, Boolean modo){
+        e1.setEnabled(modo);
+        e2.setEnabled(modo);
+        e3.setEnabled(modo);
+    }
+
+    private boolean temCamposNulos(EditText e1, EditText e2, EditText e3, boolean mErro) {
+
+        if (e1.getText().toString().equals("")){
+            if(mErro)
+                e1.setError(getString(R.string.msg_campo_nao_nulo));
+            return true;
+        }
+        if (e2.getText().toString().equals("")) {
+            if(mErro)
+                e2.setError(getString(R.string.msg_campo_nao_nulo));
+            return true;
+        }
+        if (e3.getText().toString().equals("")) {
+            if(mErro)
+                e3.setError(getString(R.string.msg_campo_nao_nulo));
+            return true;
+        }
+        return false;
     }
 }

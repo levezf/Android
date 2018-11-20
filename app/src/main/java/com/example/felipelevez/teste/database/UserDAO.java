@@ -66,14 +66,9 @@ public class UserDAO extends SQLiteOpenHelper{
                 COLUNA_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
 
-        if (cursor != null)
+//        if (cursor != null)
             cursor.moveToFirst();
-        User user = new User(
-                cursor.getInt(cursor.getColumnIndex(COLUNA_ID)),
-                cursor.getString(cursor.getColumnIndex(COLUNA_NOME)),
-                cursor.getString(cursor.getColumnIndex(COLUNA_EMAIL)),
-                cursor.getString(cursor.getColumnIndex(COLUNA_TELEFONE)));
-
+        User user = bindUser(cursor);
         cursor.close();
 
         return user;
@@ -83,17 +78,12 @@ public class UserDAO extends SQLiteOpenHelper{
         ArrayList<User> users = new ArrayList<User>();
         String selectQuery = "SELECT  * FROM " + NOME_TABELA + " ORDER BY " + COLUNA_NOME;
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
-                User user = new User(cursor.getInt(cursor.getColumnIndex(COLUNA_ID)),
-                        cursor.getString(cursor.getColumnIndex(COLUNA_NOME)),
-                        cursor.getString(cursor.getColumnIndex(COLUNA_EMAIL)),
-                        cursor.getString(cursor.getColumnIndex(COLUNA_TELEFONE)));
-
-                users.add(user);
+                users.add(bindUser(cursor));
             } while (cursor.moveToNext());
         }
         db.close();
@@ -126,6 +116,14 @@ public class UserDAO extends SQLiteOpenHelper{
         db.delete(NOME_TABELA, COLUNA_ID + " = ?",
                 new String[]{String.valueOf(user.getId())});
         db.close();
+    }
+
+    private User bindUser(Cursor cursor) {
+        return new User(
+                cursor.getInt(cursor.getColumnIndex(COLUNA_ID)),
+                cursor.getString(cursor.getColumnIndex(COLUNA_NOME)),
+                cursor.getString(cursor.getColumnIndex(COLUNA_EMAIL)),
+                cursor.getString(cursor.getColumnIndex(COLUNA_TELEFONE)));
     }
 
 }

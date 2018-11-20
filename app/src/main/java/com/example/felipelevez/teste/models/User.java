@@ -1,11 +1,18 @@
 package com.example.felipelevez.teste.models;
 
-public class User {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class User implements Parcelable {
 
     private String name;
     private String email;
     private String phone;
     private int id;
+
+    public User(String name, String email, String phone) {
+        this(-1, name, email, phone);
+    }
 
     public User(int id, String name, String email, String phone) {
         this.id = id;
@@ -13,11 +20,24 @@ public class User {
         this.email = email;
         this.phone=phone;
     }
-    public User(String name, String email, String phone) {
-        this.name =name;
-        this.email = email;
-        this.phone=phone;
+    private User(Parcel in){
+        this.id = in.readInt();
+        this.name = in.readString();
+        this.email =  in.readString();
+        this.phone =  in.readString();
     }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public String getEmail() {
         return email;
@@ -54,5 +74,17 @@ public class User {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.name);
+        dest.writeString(this.email);
+        dest.writeString(this.phone);
     }
 }

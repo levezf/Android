@@ -23,30 +23,4 @@ public class EditTextUtils {
             return false;
         }
     }
-
-    public static void setEnableEditText(EditText e1, EditText e2, EditText e3, Boolean modo){
-        e1.setEnabled(modo);
-        e2.setEnabled(modo);
-        e3.setEnabled(modo);
-    }
-
-    public static boolean temCamposNulos(EditText e1, EditText e2, EditText e3, boolean mErro) {
-
-        if (e1.getText().toString().equals("")){
-            if(mErro)
-                e1.setError("Este campo não pode ser nulo.");
-            return true;
-        }
-        if (e2.getText().toString().equals("")) {
-            if(mErro)
-                e2.setError("Este campo não pode ser nulo.");
-            return true;
-        }
-        if (e3.getText().toString().equals("")) {
-            if(mErro)
-                e3.setError("Este campo não pode ser nulo.");
-            return true;
-        }
-        return false;
-    }
 }

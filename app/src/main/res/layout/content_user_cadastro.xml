@@ -14,7 +14,7 @@
         android:id="@+id/et_nome"
         android:layout_marginTop="20dp"
         android:hint="@string/hint_nome"
-        android:inputType="textPersonName|textCapSentences"/>
+        android:inputType="textPersonName|textCapWords"/>
 
     <EditText
         android:id="@+id/et_telefone"
@@ -43,7 +43,7 @@
             android:layout_marginTop="20dp"
             android:layout_column="2"
             android:id="@+id/btn_salvar"
-            android:text="@string/btn_salvar"/>
+            android:text="@string/salvar"/>
 
     </GridLayout>
 

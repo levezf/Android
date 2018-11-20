@@ -1,14 +1,19 @@
 <resources>
     <string name="app_name">Lista de usuários</string>
-    <string name="action_apagar">Apagar</string>
-    <string name="btn_salvar">Salvar</string>
+
     <string name="hint_nome">Nome</string>
     <string name="hint_telefone">Telefone</string>
     <string name="hint_e_mail">E-mail</string>
-    <string name="editar">Editar</string>
-    <string name="apagar">Apagar</string>
-    <string name="a_lista_est_vazia">A lista está vazia</string>
-    <string name="pesquisar">Pesquisar</string>
 
+    <string name="codigo_pais">BR</string>
+
+    <string name="apagar">Apagar</string>
+    <string name="salvar">Salvar</string>
+    <string name="editar">Editar</string>
+
+    <string name="msg_a_lista_est_vazia">A lista está vazia</string>
+    <string name="msg_preencher_todos_os_campos">Por favor, preencha todos os campos</string>
+    <string name="msg_pesquisar">Pesquisar</string>
+    <string name="msg_campo_nao_nulo">Este campo não pode ser nulo.</string>
 
 </resources>
