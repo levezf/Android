@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -149,8 +150,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         rv_listaUsuarios.setAdapter(rv_listaUsuariosAdapter);
-
-        rv_listaUsuarios.setItemAnimator(new DefaultItemAnimator());
         rv_listaUsuarios.addItemDecoration(
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
