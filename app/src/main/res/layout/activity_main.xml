@@ -43,7 +43,6 @@
         android:textColor="@android:color/white"
         android:text="@string/msg_a_lista_est_vazia"/>
 
-
     <include layout="@layout/content_main" />
 
     <android.support.design.widget.FloatingActionButton

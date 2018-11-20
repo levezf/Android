@@ -3,6 +3,8 @@ package com.example.felipelevez.teste.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+
 public class User implements Parcelable {
 
     private String name;
@@ -75,6 +77,17 @@ public class User implements Parcelable {
     public void setId(int id) {
         this.id = id;
     }
+
+    public static User findUser(ArrayList<User> users, int id){
+
+        for(User u: users){
+            if(u.getId() == id){
+                return u;
+            }
+        }
+        return null;
+    }
+
 
     @Override
     public int describeContents() {

@@ -4,24 +4,31 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.felipelevez.teste.adapters.RecyclerViewListAdapter;
 import com.example.felipelevez.teste.database.UserDAO;
+import com.example.felipelevez.teste.interfaces.UserClickListener;
 import com.example.felipelevez.teste.models.User;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayAdapter<User> adapter;
+   // ArrayAdapter<User> adapter;
+   ArrayList<User> users;
+    RecyclerView rv_listaUsuarios;
+    RecyclerViewListAdapter rv_listaUsuariosAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,21 +38,24 @@ public class MainActivity extends AppCompatActivity {
 
         ImageView iv_listaVazia = findViewById(R.id.image_lista_vazia);
         TextView tv_listaVazia = findViewById(R.id.tv_lista_vazia);
+        rv_listaUsuarios = findViewById(R.id.recycler_lista);
 
-        UserDAO userDao = new UserDAO(this);
-        ArrayList<User> users = userDao.getAll();
-        userDao.close();
 
+        //UserDAO userDao = new UserDAO(this);
+        //ArrayList<User> users = userDao.getAll();
+        //userDao.close();
+
+        setupRecycler();
         mostraImagemListaVazia(iv_listaVazia,tv_listaVazia, (users.isEmpty())?View.VISIBLE:View.INVISIBLE);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
-        ListView lista_usuarios = findViewById(R.id.lv_lista_users);
+      //  ListView lista_usuarios = findViewById(R.id.lv_lista_users);
 
-        adapter = new ArrayAdapter<User>(this,android.R.layout.simple_expandable_list_item_1, users);
-        lista_usuarios.setAdapter(adapter);
+        //adapter = new ArrayAdapter<User>(this,android.R.layout.simple_expandable_list_item_1, users);
+       // lista_usuarios.setAdapter(adapter);
 
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -55,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                 chamaUserActivity(new User(null,null,null));
             }
         });
-
+/*
 
         lista_usuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -65,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 chamaUserActivity(user);
             }
         });
-
+*/
 
     }
 
@@ -102,11 +112,47 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                adapter.getFilter().filter(newText);
-                return true;
+                rv_listaUsuariosAdapter.getFilter().filter(newText);
+                return false;
             }
         });
+
         return super.onCreateOptionsMenu(menu);
+    }
+    private void setupRecycler() {
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        rv_listaUsuarios.setLayoutManager(layoutManager);
+
+        UserDAO userDao = new UserDAO(this);
+        users = userDao.getAll();
+        userDao.close();
+
+        rv_listaUsuariosAdapter = new RecyclerViewListAdapter(users);
+//        rv_listaUsuariosAdapter.setOnItemClickListener(new UserClickListener() {
+//            @Override
+//            public void onItemClick(View v, int position) {
+//                Log.d("TAG", "" + position);
+//              //  int id = (int)  rv_listaUsuariosAdapter.getItemId(position);
+//
+//              //  User user = User.findUser(users, id);
+//
+//               // chamaUserActivity(user);
+//            }
+//        });
+
+        rv_listaUsuariosAdapter.setOnItemClickListener(new UserClickListener() {
+            @Override
+            public void onUserClick(User user) {
+                chamaUserActivity(user);
+            }
+        });
+
+        rv_listaUsuarios.setAdapter(rv_listaUsuariosAdapter);
+
+        rv_listaUsuarios.setItemAnimator(new DefaultItemAnimator());
+        rv_listaUsuarios.addItemDecoration(
+                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 
 }
