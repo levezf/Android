@@ -16,5 +16,7 @@
     <string name="msg_pesquisar">Pesquisar</string>
     <string name="msg_campo_nao_nulo">Este campo não pode ser nulo.</string>
     <string name="app_user_activity">Usuário</string>
+    <string name="msg_email_invalido">Informe um e-mail válido.</string>
+    <string name="msg_telefone_invalido">Informe um telefone válido.</string>
 
 </resources>

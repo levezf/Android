@@ -27,13 +27,22 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
    // ArrayAdapter<User> adapter;
-   ArrayList<User> users;
-    RecyclerView rv_listaUsuarios;
-    RecyclerViewListAdapter rv_listaUsuariosAdapter;
+    private ArrayList<User> users;
+    private RecyclerView rv_listaUsuarios;
+    private RecyclerViewListAdapter rv_listaUsuariosAdapter;
+    private static final String EXTRA_USER = "user";
+    private static final String SAVED_EXTRA_PESQUISA = "pesquisa";
+    private String pesquisando = null;
+    private  SearchView sv_busca;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(savedInstanceState!=null){
+            pesquisando = savedInstanceState.getString(SAVED_EXTRA_PESQUISA);
+        }
+
         setContentView(R.layout.activity_main);
 
 
@@ -80,6 +89,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(SAVED_EXTRA_PESQUISA, pesquisando);
+
+    }
+
     private void mostraImagemListaVazia(ImageView iv, TextView tv, int visible) {
         iv.setVisibility(visible);
         tv.setVisibility(visible);
@@ -87,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void chamaUserActivity(User user) {
         Intent intent = new Intent(getApplicationContext(), UserActivity.class);
-        intent.putExtra("user", user);
+        intent.putExtra(EXTRA_USER, user);
         startActivity(intent);
     }
 
@@ -96,16 +113,30 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem menuPesquisa = menu.findItem(R.id.action_pesquisar);
-        SearchView sv = (SearchView) menuPesquisa.getActionView();
-        sv.setQueryHint(getString(R.string.msg_pesquisar));
+        sv_busca = (SearchView) menuPesquisa.getActionView();
+        sv_busca.setQueryHint(getString(R.string.msg_pesquisar));
+
 
 
         /************************   deixar a barra de busca match_parent no modo landscape  **********************************/
         menuPesquisa.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItem.SHOW_AS_ACTION_ALWAYS );
-        sv.setMaxWidth(Integer.MAX_VALUE);
+        sv_busca.setMaxWidth(Integer.MAX_VALUE);
         /********************************************************************************************************************/
 
-        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+        if(pesquisando != null) {
+            menuPesquisa.expandActionView();
+
+            sv_busca.post(new Runnable() {
+                @Override
+                public void run() {
+                    sv_busca.setQuery(pesquisando, false);
+                }
+            });
+
+        }
+
+        sv_busca.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
@@ -114,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 rv_listaUsuariosAdapter.getFilter().filter(newText);
+                pesquisando = newText;
                 return false;
             }
         });

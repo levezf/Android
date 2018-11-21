@@ -1,9 +1,7 @@
 package com.example.felipelevez.teste;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,12 +18,15 @@ import com.example.felipelevez.teste.utils.EditTextUtils;
 
 public class UserActivity extends AppCompatActivity {
 
-    private String modo;
     private EditText phone = null;
     private EditText email = null ;
     private EditText name= null;
     private UserDAO userDAO;
     private User user;
+    private static final String EXTRA_USER = "user";
+    private static final String SAVED_EXTRA_EDIT = "edit";
+    private boolean editando = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,19 +34,22 @@ public class UserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         if(savedInstanceState!=null){
-            modo = savedInstanceState.getString("modo");
-            user = savedInstanceState.getParcelable("user");
+            user = savedInstanceState.getParcelable(EXTRA_USER);
+            editando = savedInstanceState.getBoolean(SAVED_EXTRA_EDIT);
         }else{
             user = getIntent().getParcelableExtra("user");
-            modo = (user.getId() == -1)?"insercao":"modificar";
         }
 
         setContentView(R.layout.activity_user);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        if(getSupportActionBar()!=null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
 
         Button btn_salvar = findViewById(R.id.btn_salvar);
         name = findViewById(R.id.et_nome);
@@ -53,25 +57,26 @@ public class UserActivity extends AppCompatActivity {
         phone = findViewById(R.id.et_telefone);
         phone.addTextChangedListener(new PhoneNumberFormattingTextWatcher(getString(R.string.codigo_pais)));
 
-        if(modo.equals("insercao")){
+        if(user.getId() == -1){
             setEnableEditText(name, email, phone, true);
 
         }else{
             name.setText(user.getName());
             email.setText(user.getEmail());
             phone.setText(user.getPhone());
-            setEnableEditText(name, email, phone, (modo.equals("edicao")));
+
+            setEnableEditText(name, email, phone, (user.getId() == -1)||editando);
         }
 
         btn_salvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!temCamposNulos(name, phone,email, true) && EditTextUtils.phoneEhValido(phone) && EditTextUtils.emailEhValido(email)){
+                if (!temCamposNulos(name, phone,email, true) && EditTextUtils.phoneEhValido(UserActivity.this,phone) && EditTextUtils.emailEhValido(UserActivity.this, email)){
                     if (name.isEnabled()) {
                         setEnableEditText(name, email, phone, false);
 
                         userDAO =  new UserDAO(getApplicationContext());
-                        if (modo.equals("insercao")) {
+                        if (user.getId() == -1) {
                             userDAO.insert(new User(name.getText().toString(), email.getText().toString(), phone.getText().toString()));
                         } else {
                             userDAO.update(new User(user.getId(), name.getText().toString(), email.getText().toString(), phone.getText().toString()));
@@ -98,8 +103,8 @@ public class UserActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("modo", modo);
-        outState.putParcelable("user", user);
+        outState.putParcelable(EXTRA_USER, user);
+        outState.putBoolean(SAVED_EXTRA_EDIT, editando);
     }
 
     @Override
@@ -107,17 +112,17 @@ public class UserActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_apagar) {
-            if(!modo.equals("insercao") && !temCamposNulos(name, phone, email, false)){
-                userDAO =  new UserDAO(getApplicationContext());
+            if(!(user.getId() == -1) && !temCamposNulos(name, phone, email, false)){
+                userDAO =  new UserDAO(this);
                 userDAO.delete(user);
                 userDAO.close();
             }
             voltaInicio();
         }
         if(id == R.id.action_editar){
-            if(!modo.equals("insercao")) {
+            if(!(user.getId() == -1)) {
                 setEnableEditText(name, email, phone, true);
-                modo = "edicao";
+                editando = true;
             }
         }
 
