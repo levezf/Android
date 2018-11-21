@@ -24,4 +24,5 @@
     android:layout_height="match_parent"
     android:textAlignment="center"
     tools:listitem="@layout/content_main_lines"
-    android:padding="16dp" />
+    android:padding="16dp"
+    />
