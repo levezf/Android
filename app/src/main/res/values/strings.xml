@@ -15,5 +15,6 @@
     <string name="msg_preencher_todos_os_campos">Por favor, preencha todos os campos</string>
     <string name="msg_pesquisar">Pesquisar</string>
     <string name="msg_campo_nao_nulo">Este campo não pode ser nulo.</string>
+    <string name="app_user_activity">Usuário</string>
 
 </resources>

@@ -24,9 +24,10 @@
         </activity>
         <activity
             android:name=".UserActivity"
-            android:label="Usuário"
+            android:label="@string/app_user_activity"
             android:theme="@style/Theme.MaterialComponents.NoActionBar"
-            android:parentActivityName="com.example.felipelevez.teste.MainActivity" >
+            android:parentActivityName="com.example.felipelevez.teste.MainActivity"
+            tools:ignore="UnusedAttribute">
         </activity>
     </application>
 

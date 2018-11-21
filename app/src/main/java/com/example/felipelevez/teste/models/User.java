@@ -40,6 +40,18 @@ public class User implements Parcelable {
             return new User[size];
         }
     };
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.name);
+        dest.writeString(this.email);
+        dest.writeString(this.phone);
+    }
 
     public String getEmail() {
         return email;
@@ -78,26 +90,5 @@ public class User implements Parcelable {
         this.id = id;
     }
 
-    public static User findUser(ArrayList<User> users, int id){
 
-        for(User u: users){
-            if(u.getId() == id){
-                return u;
-            }
-        }
-        return null;
-    }
-
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.id);
-        dest.writeString(this.name);
-        dest.writeString(this.email);
-        dest.writeString(this.phone);
-    }
 }
