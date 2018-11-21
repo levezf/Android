@@ -3,8 +3,6 @@ package com.example.felipelevez.teste.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-
 public class User implements Parcelable {
 
     private String name;

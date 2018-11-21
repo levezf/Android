@@ -4,14 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -26,7 +23,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-   // ArrayAdapter<User> adapter;
     private ArrayList<User> users;
     private RecyclerView rv_listaUsuarios;
     private RecyclerViewListAdapter rv_listaUsuariosAdapter;
@@ -50,22 +46,11 @@ public class MainActivity extends AppCompatActivity {
         TextView tv_listaVazia = findViewById(R.id.tv_lista_vazia);
         rv_listaUsuarios = findViewById(R.id.recycler_lista);
 
-
-        //UserDAO userDao = new UserDAO(this);
-        //ArrayList<User> users = userDao.getAll();
-        //userDao.close();
-
         setupRecycler();
         mostraImagemListaVazia(iv_listaVazia,tv_listaVazia, (users.isEmpty())?View.VISIBLE:View.INVISIBLE);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
-      //  ListView lista_usuarios = findViewById(R.id.lv_lista_users);
-
-        //adapter = new ArrayAdapter<User>(this,android.R.layout.simple_expandable_list_item_1, users);
-       // lista_usuarios.setAdapter(adapter);
 
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -75,20 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 chamaUserActivity(new User(null,null,null));
             }
         });
-/*
-
-        lista_usuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                User user = (User) parent.getAdapter().getItem(position); // o filtro altera a ordem dos elementos, precisa disso pra pegar o elemento correto.
-                chamaUserActivity(user);
-            }
-        });
-*/
-
     }
-
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -162,17 +134,6 @@ public class MainActivity extends AppCompatActivity {
         userDao.close();
 
         rv_listaUsuariosAdapter = new RecyclerViewListAdapter(users);
-//        rv_listaUsuariosAdapter.setOnItemClickListener(new UserClickListener() {
-//            @Override
-//            public void onItemClick(View v, int position) {
-//                Log.d("TAG", "" + position);
-//              //  int id = (int)  rv_listaUsuariosAdapter.getItemId(position);
-//
-//              //  User user = User.findUser(users, id);
-//
-//               // chamaUserActivity(user);
-//            }
-//        });
 
         rv_listaUsuariosAdapter.setOnItemClickListener(new UserClickListener() {
             @Override

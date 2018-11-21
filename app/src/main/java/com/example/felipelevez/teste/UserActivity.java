@@ -37,7 +37,7 @@ public class UserActivity extends AppCompatActivity {
             user = savedInstanceState.getParcelable(EXTRA_USER);
             editando = savedInstanceState.getBoolean(SAVED_EXTRA_EDIT);
         }else{
-            user = getIntent().getParcelableExtra("user");
+            user = getIntent().getParcelableExtra(EXTRA_USER);
         }
 
         setContentView(R.layout.activity_user);
