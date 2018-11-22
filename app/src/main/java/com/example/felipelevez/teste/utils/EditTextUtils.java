@@ -3,10 +3,7 @@ package com.example.felipelevez.teste.utils;
 import android.content.Context;
 import android.util.Patterns;
 import android.widget.EditText;
-
 import com.example.felipelevez.teste.R;
-
-//TODO: Erro ao passar para o @string
 
 
 public class EditTextUtils {

@@ -1,8 +1,11 @@
 package com.example.felipelevez.teste.fragments;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -22,6 +25,8 @@ import com.example.felipelevez.teste.R;
 import com.example.felipelevez.teste.database.UserDAO;
 import com.example.felipelevez.teste.models.User;
 import com.example.felipelevez.teste.utils.EditTextUtils;
+
+import java.util.Objects;
 
 public class UserFragment extends Fragment {
 
@@ -45,6 +50,7 @@ public class UserFragment extends Fragment {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -54,6 +60,8 @@ public class UserFragment extends Fragment {
             user = savedInstanceState.getParcelable(EXTRA_USER);
             editando = savedInstanceState.getBoolean(SAVED_EXTRA_EDIT);
         }else{
+
+            assert getArguments() != null;
             user = getArguments().getParcelable(EXTRA_USER);
         }
 
@@ -62,9 +70,11 @@ public class UserFragment extends Fragment {
         Toolbar toolbar = view.findViewById(R.id.toolbar);
 
         if(null != getActivity()) {
-            ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+            ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+            Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+            Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setDisplayShowHomeEnabled(true);
+
+
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -113,8 +123,8 @@ public class UserFragment extends Fragment {
                     }
                     voltaInicio();
                 }else{
-                    //Snackbar.make(view.findViewById(R.id.backgroud_user_layout), R.string.msg_preencher_todos_os_campos, Snackbar.LENGTH_LONG)
-                          //  .setAction("Action", null).show();
+                    Snackbar.make(getActivity().findViewById(R.id.backgroud_user_layout), R.string.msg_preencher_todos_os_campos, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
             }
         });
@@ -171,7 +181,8 @@ public class UserFragment extends Fragment {
 
     private void voltaInicio() {
         //getActivity().getSupportFragmentManager().popBackStackImmediate();
-        getActivity().onBackPressed();
+        if(getActivity()!=null)
+            getActivity().onBackPressed();
     }
 
     private boolean temCamposNulos(EditText e1, EditText e2, EditText e3, boolean mErro) {

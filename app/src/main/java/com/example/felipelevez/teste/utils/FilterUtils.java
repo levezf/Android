@@ -1,10 +1,8 @@
 package com.example.felipelevez.teste.utils;
 
 import android.widget.Filter;
-
 import com.example.felipelevez.teste.adapters.RecyclerViewListAdapter;
 import com.example.felipelevez.teste.models.User;
-
 import java.util.ArrayList;
 
 public class FilterUtils extends Filter {
