@@ -14,6 +14,11 @@ public class User implements Parcelable {
         this(-1, name, email, phone);
     }
 
+
+    public User(){
+        this(-1, null, null, null);
+    }
+
     public User(int id, String name, String email, String phone) {
         this.id = id;
         this.name =name;
