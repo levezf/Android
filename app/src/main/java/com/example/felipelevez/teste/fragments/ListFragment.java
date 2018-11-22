@@ -18,8 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.example.felipelevez.teste.MainActivity;
 import com.example.felipelevez.teste.R;
 import com.example.felipelevez.teste.adapters.RecyclerViewListAdapter;
 import com.example.felipelevez.teste.database.UserDAO;
