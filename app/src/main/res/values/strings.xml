@@ -18,5 +18,6 @@
     <string name="app_user_activity">Usuário</string>
     <string name="msg_email_invalido">Informe um e-mail válido.</string>
     <string name="msg_telefone_invalido">Informe um telefone válido.</string>
+    <string name="nenhum_usuario_selecionado">Nenhum usuário selecionado</string>
 
 </resources>

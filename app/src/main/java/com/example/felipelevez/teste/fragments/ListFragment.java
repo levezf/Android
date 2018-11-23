@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.felipelevez.teste.MainActivity;
 import com.example.felipelevez.teste.R;
 import com.example.felipelevez.teste.adapters.RecyclerViewListAdapter;
 import com.example.felipelevez.teste.database.UserDAO;
@@ -54,6 +56,7 @@ public class ListFragment extends Fragment {
         if(savedInstanceState!=null){
             pesquisando = savedInstanceState.getString(SAVED_EXTRA_PESQUISA);
         }
+
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_list, parent, false);
 
@@ -64,11 +67,12 @@ public class ListFragment extends Fragment {
         setupRecycler();
         tv_lista_vazia.setVisibility((users.isEmpty())?View.VISIBLE:View.INVISIBLE);
 
-        final Toolbar toolbar = view.findViewById(R.id.toolbar);
-        if(null != getActivity()) {
-            ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        if (!getResources().getBoolean(R.bool.twoPaneMode)) {
+            final Toolbar toolbar = view.findViewById(R.id.toolbar);
+            if (null != getActivity()) {
+                ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+            }
         }
-
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -87,9 +91,14 @@ public class ListFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        menu.clear();
-        inflater.inflate(R.menu.menu_main, menu);
+        if(!getResources().getBoolean(R.bool.twoPaneMode)){
+            super.onCreateOptionsMenu(menu, inflater);
+            menu.clear();
+            inflater.inflate(R.menu.menu_main, menu);
+        }else{
+            super.onCreateOptionsMenu(menu, ((MainActivity) getActivity()).getMenuInflater());
+        }
+
         MenuItem menuPesquisa = menu.findItem(R.id.action_pesquisar);
         sv_busca = (SearchView) menuPesquisa.getActionView();
         sv_busca.setQueryHint(getString(R.string.msg_pesquisar));
@@ -148,7 +157,8 @@ public class ListFragment extends Fragment {
             @Override
             public void onUserClick(User user) {
                 pesquisando = null;
-               chamaFragmentUser(user);
+                chamaFragmentUser(user);
+
             }
         });
 
@@ -160,24 +170,29 @@ public class ListFragment extends Fragment {
         }
     }
 
-    private void mostraImagemListaVazia(ImageView iv, TextView tv, int visible) {
-        iv.setVisibility(visible);
-        tv.setVisibility(visible);
-    }
 
     private void chamaFragmentUser(User user){
 
-        Bundle arg = new Bundle();
-        arg.putParcelable(EXTRA_USER, user);
-        UserFragment fragment = UserFragment.newInstance();
-        fragment.setArguments(arg);
+       // Bundle arg = new Bundle();
+        //arg.putParcelable(EXTRA_USER, user);
+     //   UserFragment fragment = UserFragment.newInstance();
+       // fragment.setArguments(arg);
+        if (!getResources().getBoolean(R.bool.twoPaneMode)) {
+            if (getActivity() != null) {
+                ((MainActivity) getActivity()).alteraUserFragment(user, R.id.fragment);
+            }
 
+        }else{
+            ((MainActivity) getActivity()).alteraUserFragment(user, R.id.fragment_details);
+        }
+        /*
         if(getActivity() !=null)
-            getActivity().getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.fragment, fragment).commit();
+            getActivity().getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.fragment, fragment).commit();*/
 
     }
 
     private void chamaFragmentUser(){
+
         chamaFragmentUser(new User());
     }
 
