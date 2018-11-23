@@ -149,6 +149,7 @@ public class UserFragment extends Fragment {
             name.setVisibility(View.INVISIBLE);
             email.setVisibility(View.INVISIBLE);
             phone.setVisibility(View.INVISIBLE);
+
         }
 
 
@@ -184,23 +185,24 @@ public class UserFragment extends Fragment {
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+        if(!vazio ) {
+            int id = item.getItemId();
 
-        if (id == R.id.action_apagar) {
-            if(!(user.getId() == -1) && !temCamposNulos(name, phone, email, false)){
-                userDAO =  new UserDAO(getContext());
-                userDAO.delete(user);
-                userDAO.close();
+            if (id == R.id.action_apagar) {
+                if (!(user.getId() == -1) && !temCamposNulos(name, phone, email, false)) {
+                    userDAO = new UserDAO(getContext());
+                    userDAO.delete(user);
+                    userDAO.close();
+                }
+                voltaInicio();
             }
-            voltaInicio();
-        }
-        if(id == R.id.action_editar){
-            if(!(user.getId() == -1)) {
-                setEnableEditText(name, email, phone, true);
-                editando = true;
+            if (id == R.id.action_editar) {
+                if (!(user.getId() == -1)) {
+                    setEnableEditText(name, email, phone, true);
+                    editando = true;
+                }
             }
         }
-
         return super.onOptionsItemSelected(item);
     }
 
