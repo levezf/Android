@@ -67,14 +67,12 @@ public class MainActivity extends AppCompatActivity {
         alteraUserFragment(user, layout, false);
     }
 
-
     public void inflaFragment(Fragment fragment, int layout){
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(layout, fragment);
         fragmentTransaction.commit();
     }
-
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

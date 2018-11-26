@@ -94,6 +94,7 @@ public class UserFragment extends Fragment {
             }
 
         }
+
         TextView tv_item_nao_selecionado = view.findViewById(R.id.tv_user_nao_selecionado);
         Button btn_salvar = view.findViewById(R.id.btn_salvar);
         name = view.findViewById(R.id.et_nome);
@@ -152,9 +153,6 @@ public class UserFragment extends Fragment {
 
         }
 
-
-
-
         return view;
     }
 
@@ -165,7 +163,6 @@ public class UserFragment extends Fragment {
         outState.putBoolean(SAVED_EXTRA_EDIT, editando);
         outState.putBoolean(EXTRA_VAZIO, vazio);
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -178,11 +175,13 @@ public class UserFragment extends Fragment {
         }
 
     }
+
     private void setEnableEditText(EditText e1, EditText e2, EditText e3, Boolean modo){
         e1.setEnabled(modo);
         e2.setEnabled(modo);
         e3.setEnabled(modo);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(!vazio ) {

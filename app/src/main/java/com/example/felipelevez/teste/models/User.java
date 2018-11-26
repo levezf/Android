@@ -25,6 +25,7 @@ public class User implements Parcelable {
         this.email = email;
         this.phone=phone;
     }
+
     private User(Parcel in){
         this.id = in.readInt();
         this.name = in.readString();
@@ -43,6 +44,7 @@ public class User implements Parcelable {
             return new User[size];
         }
     };
+
     @Override
     public int describeContents() {
         return 0;
