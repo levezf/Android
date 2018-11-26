@@ -65,9 +65,7 @@ public class UserDAO extends SQLiteOpenHelper{
                 new String[]{COLUNA_ID,COLUNA_EMAIL, COLUNA_NOME, COLUNA_TELEFONE},
                 COLUNA_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
-
-//        if (cursor != null)
-            cursor.moveToFirst();
+        cursor.moveToFirst();
         User user = bindUser(cursor);
         cursor.close();
 

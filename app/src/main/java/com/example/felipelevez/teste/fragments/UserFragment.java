@@ -22,7 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.felipelevez.teste.MainActivity;
-import com.example.felipelevez.teste.Presenter.UsuariosPresenter;
+import com.example.felipelevez.teste.presenter.UsuariosPresenter;
 import com.example.felipelevez.teste.R;
 import com.example.felipelevez.teste.database.UserDAO;
 import com.example.felipelevez.teste.interfaces.UsuariosContrato;

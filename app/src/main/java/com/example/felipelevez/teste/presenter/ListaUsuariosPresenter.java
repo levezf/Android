@@ -1,4 +1,4 @@
-package com.example.felipelevez.teste.Presenter;
+package com.example.felipelevez.teste.presenter;
 
 import android.content.Context;
 import android.view.View;
@@ -23,8 +23,6 @@ public class ListaUsuariosPresenter implements ListaUsuariosContrato.Presenter {
     @Override
     public void buscaUsuarios() {
         ArrayList<User> users;
-
-
         users = userDao.getAll();
 
         if(users.isEmpty()){
@@ -34,7 +32,6 @@ public class ListaUsuariosPresenter implements ListaUsuariosContrato.Presenter {
             view.exibeListaVazia(View.INVISIBLE);
         }
     }
-
 
     @Override
     public void inflaUserFragment(User user) {
