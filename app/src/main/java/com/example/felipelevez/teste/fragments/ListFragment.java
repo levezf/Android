@@ -16,28 +16,29 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.felipelevez.teste.MainActivity;
+import com.example.felipelevez.teste.Presenter.ListaUsuariosPresenter;
 import com.example.felipelevez.teste.R;
 import com.example.felipelevez.teste.adapters.RecyclerViewListAdapter;
-import com.example.felipelevez.teste.database.UserDAO;
+import com.example.felipelevez.teste.interfaces.ListaUsuariosContrato;
 import com.example.felipelevez.teste.interfaces.UserClickListener;
 import com.example.felipelevez.teste.models.User;
 
 import java.util.ArrayList;
 
-public class ListFragment extends Fragment {
-
+public class ListFragment extends Fragment implements ListaUsuariosContrato.View{
 
     private ArrayList<User> users;
     private RecyclerView rv_listaUsuarios;
     private RecyclerViewListAdapter rv_listaUsuariosAdapter;
-    private static final String EXTRA_USER = "user";
     private static final String SAVED_EXTRA_PESQUISA = "pesquisa";
     private String pesquisando = null;
-    private  SearchView sv_busca;
+    private SearchView sv_busca;
+    private TextView tv_lista_vazia;
+    private ListaUsuariosPresenter presenter;
+    private View view;
 
     public static ListFragment newInstance() {
         return new ListFragment();
@@ -52,7 +53,7 @@ public class ListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         if(savedInstanceState!=null){
             pesquisando = savedInstanceState.getString(SAVED_EXTRA_PESQUISA);
         }
@@ -60,30 +61,25 @@ public class ListFragment extends Fragment {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_list, parent, false);
 
-        TextView tv_lista_vazia = view.findViewById(R.id.tv_lista_vazia);
+        this.view = view;
+
+        tv_lista_vazia = view.findViewById(R.id.tv_lista_vazia);
         rv_listaUsuarios = view.findViewById(R.id.recycler_lista);
 
+        presenter = new ListaUsuariosPresenter(this, getContext());
+        insereToolbar();
+        presenter.buscaUsuarios();
 
-        setupRecycler();
-        tv_lista_vazia.setVisibility((users.isEmpty())?View.VISIBLE:View.INVISIBLE);
-
-        if (!getResources().getBoolean(R.bool.twoPaneMode)) {
-            final Toolbar toolbar = view.findViewById(R.id.toolbar);
-            if (null != getActivity()) {
-                ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-            }
-        }
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 pesquisando = null;
-                chamaFragmentUser();
+                presenter.inflaUserFragment(new User());
 
             }
         });
-
 
         return view;
     }
@@ -91,26 +87,24 @@ public class ListFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if(!getResources().getBoolean(R.bool.twoPaneMode)){
+        if(!ehTabletSW600()){
             super.onCreateOptionsMenu(menu, inflater);
             menu.clear();
             inflater.inflate(R.menu.menu_main, menu);
         }else{
-            super.onCreateOptionsMenu(menu, ((MainActivity) getActivity()).getMenuInflater());
+            if(getActivity()!=null)
+                super.onCreateOptionsMenu(menu, getActivity().getMenuInflater());
         }
 
         MenuItem menuPesquisa = menu.findItem(R.id.action_pesquisar);
         sv_busca = (SearchView) menuPesquisa.getActionView();
         sv_busca.setQueryHint(getString(R.string.msg_pesquisar));
 
-
-
         menuPesquisa.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItem.SHOW_AS_ACTION_ALWAYS );
         sv_busca.setMaxWidth(Integer.MAX_VALUE);
 
         if(pesquisando != null) {
             menuPesquisa.expandActionView();
-
             sv_busca.post(new Runnable() {
                 @Override
                 public void run() {
@@ -128,7 +122,9 @@ public class ListFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                rv_listaUsuariosAdapter.getFilter().filter(newText);
+                try {
+                    rv_listaUsuariosAdapter.getFilter().filter(newText);
+                }catch (Exception ignored){ }
                 pesquisando = newText;
                 return false;
             }
@@ -142,23 +138,33 @@ public class ListFragment extends Fragment {
         outState.putString(SAVED_EXTRA_PESQUISA, pesquisando);
     }
 
-    private void setupRecycler() {
+    @Override
+    public void chamaFragmentUser(User user, int layout){
 
+        if (getActivity() != null)
+            ((MainActivity) getActivity()).alteraUserFragment(user,layout);
+
+    }
+
+
+    @Override
+    public void exibeListaVazia(int visible) {
+        tv_lista_vazia.setVisibility(visible);
+    }
+
+    @Override
+    public void preencheLista(ArrayList<User> users) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rv_listaUsuarios.setLayoutManager(layoutManager);
+        this.users = users;
 
-        UserDAO userDao = new UserDAO(getContext());
-        users = userDao.getAll();
-        userDao.close();
-
-        rv_listaUsuariosAdapter = new RecyclerViewListAdapter(users);
+        rv_listaUsuariosAdapter = new RecyclerViewListAdapter(this.users);
 
         rv_listaUsuariosAdapter.setOnItemClickListener(new UserClickListener() {
             @Override
             public void onUserClick(User user) {
                 pesquisando = null;
-                chamaFragmentUser(user);
-
+                presenter.inflaUserFragment(user);
             }
         });
 
@@ -170,31 +176,17 @@ public class ListFragment extends Fragment {
         }
     }
 
+    private void insereToolbar() {
 
-    private void chamaFragmentUser(User user){
-
-       // Bundle arg = new Bundle();
-        //arg.putParcelable(EXTRA_USER, user);
-     //   UserFragment fragment = UserFragment.newInstance();
-       // fragment.setArguments(arg);
-        if (!getResources().getBoolean(R.bool.twoPaneMode)) {
-            if (getActivity() != null) {
-                ((MainActivity) getActivity()).alteraUserFragment(user, R.id.fragment);
+        if(!ehTabletSW600()){
+            final Toolbar toolbar = view.findViewById(R.id.toolbar);
+            if (null != getActivity()) {
+                ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
             }
-
-        }else{
-            ((MainActivity) getActivity()).alteraUserFragment(user, R.id.fragment_details);
         }
-        /*
-        if(getActivity() !=null)
-            getActivity().getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.fragment, fragment).commit();*/
-
     }
-
-    private void chamaFragmentUser(){
-
-        chamaFragmentUser(new User());
+    @Override
+    public boolean ehTabletSW600() {
+        return getResources().getBoolean(R.bool.twoPaneMode);
     }
-
-
 }

@@ -22,14 +22,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.felipelevez.teste.MainActivity;
+import com.example.felipelevez.teste.Presenter.UsuariosPresenter;
 import com.example.felipelevez.teste.R;
 import com.example.felipelevez.teste.database.UserDAO;
+import com.example.felipelevez.teste.interfaces.UsuariosContrato;
 import com.example.felipelevez.teste.models.User;
 import com.example.felipelevez.teste.utils.EditTextUtils;
 
 import java.util.Objects;
 
-public class UserFragment extends Fragment {
+public class UserFragment extends Fragment implements UsuariosContrato.View {
 
     private EditText phone = null;
     private EditText email = null ;
@@ -40,7 +42,11 @@ public class UserFragment extends Fragment {
     private static final String SAVED_EXTRA_EDIT = "edit";
     private boolean editando = false;
     private static final String EXTRA_VAZIO = "vazio";
-    private Boolean vazio;
+    private boolean vazio;
+    private View view;
+    private UsuariosPresenter presenter;
+    private Button btn_salvar;
+    private TextView tv_item_nao_selecionado;
 
 
     public static UserFragment newInstance() {
@@ -60,6 +66,8 @@ public class UserFragment extends Fragment {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_user, parent, false);
 
+        this.view = view;
+
         if (savedInstanceState != null){
             user = savedInstanceState.getParcelable(EXTRA_USER);
             editando = savedInstanceState.getBoolean(SAVED_EXTRA_EDIT);
@@ -71,89 +79,71 @@ public class UserFragment extends Fragment {
             vazio = getArguments().getBoolean(EXTRA_VAZIO);
         }
 
+        setupVariaveisFindViewById();
+        insereToolbar();
 
         assert view != null;
-        if (!getResources().getBoolean(R.bool.twoPaneMode)){
-            Toolbar toolbar = view.findViewById(R.id.toolbar);
-
-            if(null != getActivity()) {
-                ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-                Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-                Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setDisplayShowHomeEnabled(true);
+        presenter = new UsuariosPresenter(this, getContext());
+        presenter.setupOrganizacaoDeExibicao(vazio, user);
 
 
-                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        FragmentManager manager = getActivity().getSupportFragmentManager();
-                        FragmentTransaction transaction = manager.beginTransaction();
-                        transaction.replace(R.id.fragment, ListFragment.newInstance());
-                        transaction.commit();
-                    }
-                });
+        return view;
+    }
+
+    @Override
+    public void executaAcaoBotaoSalvar(){
+        btn_salvar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!temCamposNulos(name, phone, email, true) && EditTextUtils.phoneEhValido(getContext(), phone) && EditTextUtils.emailEhValido(getContext(), email)) {
+                    bindUser();
+                    presenter.executaAcaoBotaoSalvar(user, name.isEnabled());
+                } else {
+                    msgErroCamposNulos();
+                }
+
             }
+        });
+    }
 
-        }
 
-        TextView tv_item_nao_selecionado = view.findViewById(R.id.tv_user_nao_selecionado);
-        Button btn_salvar = view.findViewById(R.id.btn_salvar);
+    private void bindUser(){
+        user.setEmail(email.getText().toString());
+        user.setName(name.getText().toString());
+        user.setPhone(phone.getText().toString());
+    }
+
+
+    private void msgErroCamposNulos(){
+        assert  getActivity()!=null;
+        Snackbar.make(getActivity().findViewById(R.id.backgroud_user_layout), R.string.msg_preencher_todos_os_campos, Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+    }
+
+    @Override
+    public void adicionaMaskTelefone() {
+        phone.addTextChangedListener(new PhoneNumberFormattingTextWatcher(getString(R.string.codigo_pais)));
+    }
+
+    @Override
+    public void setItemNaoSelecionado(int visibilidade) {
+        tv_item_nao_selecionado.setVisibility(visibilidade);
+    }
+
+    @Override
+    public void insereValoresNosEditText() {
+        name.setText(user.getName());
+        email.setText(user.getEmail());
+        phone.setText(user.getPhone());
+        setEnableEditText((user.getId() == -1) || editando);
+    }
+
+    private void setupVariaveisFindViewById() {
+        tv_item_nao_selecionado = view.findViewById(R.id.tv_user_nao_selecionado);
+        btn_salvar = view.findViewById(R.id.btn_salvar);
         name = view.findViewById(R.id.et_nome);
         email = view.findViewById(R.id.et_email);
         phone = view.findViewById(R.id.et_telefone);
-
-        if(!vazio ) {
-            tv_item_nao_selecionado.setVisibility(View.INVISIBLE);
-
-
-
-            phone.addTextChangedListener(new PhoneNumberFormattingTextWatcher(getString(R.string.codigo_pais)));
-
-
-            if (user.getId() == -1) {
-                setEnableEditText(name, email, phone, true);
-
-            } else {
-                name.setText(user.getName());
-                email.setText(user.getEmail());
-                phone.setText(user.getPhone());
-
-                setEnableEditText(name, email, phone, (user.getId() == -1) || editando);
-            }
-
-            btn_salvar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!temCamposNulos(name, phone, email, true) && EditTextUtils.phoneEhValido(getContext(), phone) && EditTextUtils.emailEhValido(getContext(), email)) {
-                        if (name.isEnabled()) {
-                            setEnableEditText(name, email, phone, false);
-
-                            userDAO = new UserDAO(getContext());
-                            if (user.getId() == -1) {
-                                userDAO.insert(new User(name.getText().toString(), email.getText().toString(), phone.getText().toString()));
-                            } else {
-                                userDAO.update(new User(user.getId(), name.getText().toString(), email.getText().toString(), phone.getText().toString()));
-                            }
-                            userDAO.close();
-
-                        }
-                        voltaInicio();
-                    } else {
-                        Snackbar.make(getActivity().findViewById(R.id.backgroud_user_layout), R.string.msg_preencher_todos_os_campos, Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-                    }
-                }
-            });
-
-        }else{
-            tv_item_nao_selecionado.setVisibility(View.VISIBLE);
-            btn_salvar.setVisibility(View.INVISIBLE);
-            name.setVisibility(View.INVISIBLE);
-            email.setVisibility(View.INVISIBLE);
-            phone.setVisibility(View.INVISIBLE);
-
-        }
-
-        return view;
     }
 
     @Override
@@ -171,15 +161,55 @@ public class UserFragment extends Fragment {
             menu.clear();
             inflater.inflate(R.menu.menu_user, menu);
         }else{
-            super.onCreateOptionsMenu(menu, ((MainActivity) getActivity()).getMenuInflater());
+            assert getActivity()!=null;
+            super.onCreateOptionsMenu(menu, getActivity().getMenuInflater());
         }
 
     }
 
-    private void setEnableEditText(EditText e1, EditText e2, EditText e3, Boolean modo){
-        e1.setEnabled(modo);
-        e2.setEnabled(modo);
-        e3.setEnabled(modo);
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void insereToolbar() {
+        if (!ehTabletSW600()){
+            Toolbar toolbar = view.findViewById(R.id.toolbar);
+
+            if (null != getActivity()) {
+                ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+                Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+                Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setDisplayShowHomeEnabled(true);
+
+
+                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        FragmentManager manager = getActivity().getSupportFragmentManager();
+                        FragmentTransaction transaction = manager.beginTransaction();
+                        transaction.replace(R.id.fragment, ListFragment.newInstance());
+                        transaction.commit();
+                    }
+                });
+            }
+        }
+    }
+
+    @Override
+    public boolean ehTabletSW600() {
+        return getResources().getBoolean(R.bool.twoPaneMode);
+    }
+
+    @Override
+    public void setEnableEditText(boolean modo){
+        name.setEnabled(modo);
+        email.setEnabled(modo);
+        phone.setEnabled(modo);
+    }
+
+    @Override
+    public void msgUsuarioNaoSelecionado() {
+        tv_item_nao_selecionado.setVisibility(View.VISIBLE);
+        btn_salvar.setVisibility(View.INVISIBLE);
+        name.setVisibility(View.INVISIBLE);
+        email.setVisibility(View.INVISIBLE);
+        phone.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -193,11 +223,11 @@ public class UserFragment extends Fragment {
                     userDAO.delete(user);
                     userDAO.close();
                 }
-                voltaInicio();
+                voltaInicioSW600();
             }
             if (id == R.id.action_editar) {
                 if (!(user.getId() == -1)) {
-                    setEnableEditText(name, email, phone, true);
+                    setEnableEditText( true);
                     editando = true;
                 }
             }
@@ -205,17 +235,18 @@ public class UserFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void voltaInicio() {
-        //getActivity().getSupportFragmentManager().popBackStackImmediate();
-        if (!getResources().getBoolean(R.bool.twoPaneMode)) {
-            if (getActivity() != null)
-                /*            ((MainActivity)getActivity()).onBackPressed();*/
-                ((MainActivity) getActivity()).inflaFragment(ListFragment.newInstance(), R.id.fragment);
+    @Override
+    public void voltaInicioSW600() {
+        assert getActivity() !=null ;
+        ((MainActivity) getActivity()).inflaFragment(ListFragment.newInstance(), R.id.fragment_lista);
+        ((MainActivity) getActivity()).alteraUserFragment(null, R.id.fragment_details, true);
 
-        }else{
-            ((MainActivity) getActivity()).inflaFragment(ListFragment.newInstance(), R.id.fragment_lista);
-            ((MainActivity) getActivity()).alteraUserFragment(null, R.id.fragment_details, true);
-        }
+    }
+    @Override
+    public void voltaInicio() {
+        if (getActivity() != null)
+            ((MainActivity) getActivity()).inflaFragment(ListFragment.newInstance(), R.id.fragment);
+
     }
 
     private boolean temCamposNulos(EditText e1, EditText e2, EditText e3, boolean mErro) {
@@ -237,4 +268,6 @@ public class UserFragment extends Fragment {
         }
         return false;
     }
+
+
 }

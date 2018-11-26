@@ -15,7 +15,6 @@ import com.example.felipelevez.teste.models.User;
 public class MainActivity extends AppCompatActivity {
 
 
-    private android.support.v4.app.FragmentManager fragmentManager;
     private static final String EXTRA_VAZIO = "vazio";
     private static final String EXTRA_USER = "user";
 
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void alteraUserFragment(User user, int layout, boolean vazio){
-        fragmentManager = getSupportFragmentManager();
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft_user = fragmentManager.beginTransaction();
         UserFragment fragment = UserFragment.newInstance();
 
