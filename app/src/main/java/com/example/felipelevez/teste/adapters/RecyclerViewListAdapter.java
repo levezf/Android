@@ -20,7 +20,7 @@ import java.util.Locale;
 public class RecyclerViewListAdapter extends RecyclerView.Adapter<RecyclerViewListAdapter.ViewHolder> implements Filterable {
 
     public  ArrayList<User> users;
-    FilterUtils filter;
+    private FilterUtils filter;
     private UserClickListener userClickListener;
 
 

@@ -4,6 +4,7 @@ import android.widget.Filter;
 import com.example.felipelevez.teste.adapters.RecyclerViewListAdapter;
 import com.example.felipelevez.teste.models.User;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FilterUtils extends Filter {
 

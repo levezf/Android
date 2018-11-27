@@ -30,7 +30,6 @@ import java.util.ArrayList;
 
 public class ListFragment extends Fragment implements ListaUsuariosContrato.View{
 
-    private ArrayList<User> users;
     private RecyclerView rv_listaUsuarios;
     private RecyclerViewListAdapter rv_listaUsuariosAdapter;
     private static final String SAVED_EXTRA_PESQUISA = "pesquisa";
@@ -156,9 +155,9 @@ public class ListFragment extends Fragment implements ListaUsuariosContrato.View
     public void preencheLista(ArrayList<User> users) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rv_listaUsuarios.setLayoutManager(layoutManager);
-        this.users = users;
+        ArrayList<User> users1 = users;
 
-        rv_listaUsuariosAdapter = new RecyclerViewListAdapter(this.users);
+        rv_listaUsuariosAdapter = new RecyclerViewListAdapter(users1);
 
         rv_listaUsuariosAdapter.setOnItemClickListener(new UserClickListener() {
             @Override

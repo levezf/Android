@@ -38,7 +38,6 @@ public class UserFragment extends Fragment implements UsuariosContrato.View {
     private EditText phone = null;
     private EditText email = null ;
     private EditText name= null;
-    private UserDAO userDAO;
     private User user;
     private static final String EXTRA_USER = "user";
     private static final String SAVED_EXTRA_EDIT = "edit";
@@ -88,8 +87,6 @@ public class UserFragment extends Fragment implements UsuariosContrato.View {
         setupVariaveisFindViewById();
         insereToolbar();
 
-      //  hintAnimation.setEnabled(true);
-        
 
         assert view != null;
         presenter = new UsuariosPresenter(this, getContext());
@@ -240,7 +237,7 @@ public class UserFragment extends Fragment implements UsuariosContrato.View {
 
             if (id == R.id.action_apagar) {
                 if (!(user.getId() == -1) && !temCamposNulos(name, phone, email, false)) {
-                    userDAO = new UserDAO(getContext());
+                    UserDAO userDAO = new UserDAO(getContext());
                     userDAO.delete(user);
                     userDAO.close();
                 }
