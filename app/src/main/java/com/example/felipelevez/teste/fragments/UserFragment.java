@@ -5,11 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.PhoneNumberFormattingTextWatcher;
@@ -22,15 +19,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import com.example.felipelevez.teste.MainActivity;
 import com.example.felipelevez.teste.presenter.UsuariosPresenter;
 import com.example.felipelevez.teste.R;
-import com.example.felipelevez.teste.database.UserDAO;
 import com.example.felipelevez.teste.interfaces.UsuariosContrato;
 import com.example.felipelevez.teste.models.User;
 import com.example.felipelevez.teste.utils.EditTextUtils;
-
 import java.util.Objects;
 
 public class UserFragment extends Fragment implements UsuariosContrato.View {
@@ -194,18 +188,19 @@ public class UserFragment extends Fragment implements UsuariosContrato.View {
                 toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        FragmentManager manager = getActivity().getSupportFragmentManager();
+                        /*FragmentManager manager = getActivity().getSupportFragmentManager();
                         FragmentTransaction transaction = manager.beginTransaction();
                         transaction.replace(R.id.fragment, ListFragment.newInstance());
-                        transaction.commit();
+                        transaction.commit();*/
+                        voltar();
+
                     }
                 });
             }
         }
     }
 
-    @Override
-    public boolean ehTabletSW600() {
+    private boolean ehTabletSW600() {
         return getResources().getBoolean(R.bool.twoPaneMode);
     }
 
@@ -236,12 +231,10 @@ public class UserFragment extends Fragment implements UsuariosContrato.View {
             int id = item.getItemId();
 
             if (id == R.id.action_apagar) {
-                if (!(user.getId() == -1) && !temCamposNulos(name, phone, email, false)) {
-                    UserDAO userDAO = new UserDAO(getContext());
-                    userDAO.delete(user);
-                    userDAO.close();
+                if (!temCamposNulos(name, phone, email, false)) {
+                    presenter.executaAcaoBotaoDeletar(user);
                 }
-                voltaInicioSW600();
+                voltar();
             }
             if (id == R.id.action_editar) {
                 if (!(user.getId() == -1)) {
@@ -254,16 +247,25 @@ public class UserFragment extends Fragment implements UsuariosContrato.View {
     }
 
     @Override
-    public void voltaInicioSW600() {
-        assert getActivity() !=null ;
-        ((MainActivity) getActivity()).inflaFragment(ListFragment.newInstance(), R.id.fragment_lista);
-        ((MainActivity) getActivity()).alteraUserFragment(null, R.id.fragment_details, true);
-
+    public void voltar(){
+        if(ehTabletSW600())
+            voltaInicioSW600();
+        else
+            voltaInicio();
     }
-    @Override
-    public void voltaInicio() {
+
+
+    private void voltaInicioSW600() {
+        assert getActivity() !=null ;
+
+        ((MainActivity) getActivity()).inflaFragment(ListFragment.newInstance(), R.id.fragment_lista);
+        ((MainActivity) getActivity()).alteraUserFragment(new User(),R.id.fragment_details, true);
+    }
+
+    private void voltaInicio() {
         if (getActivity() != null)
-            ((MainActivity) getActivity()).inflaFragment(ListFragment.newInstance(), R.id.fragment);
+            getActivity().getSupportFragmentManager().popBackStack();
+           // ((MainActivity) getActivity()).inflaFragment(ListFragment.newInstance(), R.id.fragment);
 
     }
 

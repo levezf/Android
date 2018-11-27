@@ -2,6 +2,7 @@ package com.example.felipelevez.teste.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.felipelevez.teste.MainActivity;
@@ -38,6 +40,8 @@ public class ListFragment extends Fragment implements ListaUsuariosContrato.View
     private TextView tv_lista_vazia;
     private ListaUsuariosPresenter presenter;
     private View view;
+    private ProgressBar progressBar;
+    private FloatingActionButton fab;
 
     public static ListFragment newInstance() {
         return new ListFragment();
@@ -47,7 +51,6 @@ public class ListFragment extends Fragment implements ListaUsuariosContrato.View
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
     }
 
@@ -59,18 +62,19 @@ public class ListFragment extends Fragment implements ListaUsuariosContrato.View
 
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_list, parent, false);
-
         this.view = view;
 
-        tv_lista_vazia = view.findViewById(R.id.tv_lista_vazia);
-        rv_listaUsuarios = view.findViewById(R.id.recycler_lista);
-
-        presenter = new ListaUsuariosPresenter(this, getContext());
+        setupElementosDoLayout();
         insereToolbar();
-        presenter.buscaUsuarios();
 
 
-        FloatingActionButton fab = view.findViewById(R.id.fab);
+        executaAcaoFloatingButton();
+
+
+        return view;
+    }
+
+    private void executaAcaoFloatingButton() {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,10 +83,21 @@ public class ListFragment extends Fragment implements ListaUsuariosContrato.View
 
             }
         });
-
-        return view;
     }
 
+    private void setupElementosDoLayout() {
+        fab = view.findViewById(R.id.fab);
+        tv_lista_vazia = view.findViewById(R.id.tv_lista_vazia);
+        rv_listaUsuarios = view.findViewById(R.id.recycler_lista);
+        progressBar = view.findViewById(R.id.progressBar);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        presenter = new ListaUsuariosPresenter(this, getContext());
+        presenter.buscaUsuarios();
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -128,7 +143,6 @@ public class ListFragment extends Fragment implements ListaUsuariosContrato.View
                 return false;
             }
         });
-
     }
 
     @Override
@@ -155,9 +169,8 @@ public class ListFragment extends Fragment implements ListaUsuariosContrato.View
     public void preencheLista(ArrayList<User> users) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rv_listaUsuarios.setLayoutManager(layoutManager);
-        ArrayList<User> users1 = users;
 
-        rv_listaUsuariosAdapter = new RecyclerViewListAdapter(users1);
+        rv_listaUsuariosAdapter = new RecyclerViewListAdapter(users);
 
         rv_listaUsuariosAdapter.setOnItemClickListener(new UserClickListener() {
             @Override
@@ -187,5 +200,15 @@ public class ListFragment extends Fragment implements ListaUsuariosContrato.View
     @Override
     public boolean ehTabletSW600() {
         return getResources().getBoolean(R.bool.twoPaneMode);
+    }
+
+    @Override
+    public void exibeProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void encerraProgressBar() {
+        progressBar.setVisibility(View.INVISIBLE);
     }
 }

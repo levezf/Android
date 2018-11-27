@@ -8,16 +8,21 @@ public interface UsuariosContrato {
         void setEnableEditText(boolean modo);
         void msgUsuarioNaoSelecionado();
         void executaAcaoBotaoSalvar();
-        void voltaInicioSW600();
-        void voltaInicio();
+        void voltar();
         void adicionaMaskTelefone();
         void setItemNaoSelecionado(int visibilidade);
         void insereValoresNosEditText();
-        boolean ehTabletSW600();
+
     }
     interface Presenter{
         void executaAcaoBotaoSalvar(User user,  boolean nameEnable);
         void setupOrganizacaoDeExibicao(boolean vazio, User user);
+        void executaAcaoBotaoDeletar(User user);
+    }
+    interface Model{
+        void atualizaUsuarioNoBanco(User user);
+        void insereUsuarioNoBanco(User user);
+        void removeUsuarioDoBanco(User user);
     }
 
 }

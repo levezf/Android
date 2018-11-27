@@ -8,12 +8,10 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
-
 import com.example.felipelevez.teste.R;
 import com.example.felipelevez.teste.interfaces.UserClickListener;
 import com.example.felipelevez.teste.models.User;
 import com.example.felipelevez.teste.utils.FilterUtils;
-
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -81,11 +79,11 @@ public class RecyclerViewListAdapter extends RecyclerView.Adapter<RecyclerViewLi
     }
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        public TextView nome;
+        private TextView nome;
 
-        public ViewHolder(View itemView) {
+        private ViewHolder(View itemView) {
             super(itemView);
-            nome = (TextView) itemView.findViewById(R.id.tv_nome);
+            nome = itemView.findViewById(R.id.tv_nome);
 //            itemView.setOnClickListener(this);
         }
 

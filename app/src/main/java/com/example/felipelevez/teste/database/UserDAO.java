@@ -5,9 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
+import android.os.SystemClock;
 import com.example.felipelevez.teste.models.User;
-
 import java.util.ArrayList;
 
 
@@ -73,7 +72,7 @@ public class UserDAO extends SQLiteOpenHelper{
     }
 
     public ArrayList<User> getAll() {
-        ArrayList<User> users = new ArrayList<User>();
+        ArrayList<User> users = new ArrayList<>();
         String selectQuery = "SELECT  * FROM " + NOME_TABELA + " ORDER BY " + COLUNA_NOME;
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -85,6 +84,9 @@ public class UserDAO extends SQLiteOpenHelper{
             } while (cursor.moveToNext());
         }
         db.close();
+
+      //  SystemClock.sleep(6000);
+
         return users;
     }
 
