@@ -28,18 +28,14 @@ public class MainActivity extends AppCompatActivity {
             if(savedInstanceState == null){
                 inflaFragment(ListFragment.newInstance(), R.id.fragment_lista);
                 alteraUserFragment(null, R.id.fragment_details, true);
-
             }
             Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
         }else{
-
             if (savedInstanceState == null) {
-
                 inflaFragment(ListFragment.newInstance(), R.id.fragment);
             }
         }
-
     }
 
     @Override
@@ -72,10 +68,9 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(layout, fragment);
         fragmentTransaction.commit();
     }
-
+    
     @Override
     protected void onSaveInstanceState(Bundle outState) {
        super.onSaveInstanceState(outState);
-
    }
 }

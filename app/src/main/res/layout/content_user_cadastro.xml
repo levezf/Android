@@ -7,30 +7,54 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:orientation="vertical">
 
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:hintTextAppearance="?attr/hintTextAppearance"
+        android:id="@+id/hintAnimationNome"
+        >
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/et_nome"
-        android:layout_marginTop="20dp"
-        android:hint="@string/hint_nome"
-        android:inputType="textPersonName|textCapWords"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/et_nome"
+            android:layout_marginTop="20dp"
+            android:hint="@string/hint_nome"
+            android:inputType="textPersonName|textCapWords" />
 
-    <EditText
-        android:id="@+id/et_telefone"
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:hint="@string/hint_telefone"
-        android:inputType="phone"
-        android:singleLine="true" />
-    <EditText
+        app:hintTextAppearance="?attr/hintTextAppearance"
+        android:id="@+id/hintAnimationPhone"
+        >
+        <EditText
+            android:id="@+id/et_telefone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:hint="@string/hint_telefone"
+            android:inputType="phone"
+            android:singleLine="true" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:layout_marginTop="20dp"
-        android:id="@+id/et_email"
-        android:hint="@string/hint_e_mail"/>
+        app:hintTextAppearance="?attr/hintTextAppearance"
+        android:id="@+id/hintAnimationEmail"
+        >
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:layout_marginTop="20dp"
+            android:id="@+id/et_email"
+            android:hint="@string/hint_e_mail"/>
+    </android.support.design.widget.TextInputLayout>
 
     <GridLayout
         android:layout_width="match_parent"

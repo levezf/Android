@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -47,6 +49,9 @@ public class UserFragment extends Fragment implements UsuariosContrato.View {
     private UsuariosPresenter presenter;
     private Button btn_salvar;
     private TextView tv_item_nao_selecionado;
+    private TextInputLayout hintAnimationNome;
+    private TextInputLayout hintAnimationEmail;
+    private TextInputLayout hintAnimationPhone;
 
 
     public static UserFragment newInstance() {
@@ -68,6 +73,7 @@ public class UserFragment extends Fragment implements UsuariosContrato.View {
 
         this.view = view;
 
+
         if (savedInstanceState != null){
             user = savedInstanceState.getParcelable(EXTRA_USER);
             editando = savedInstanceState.getBoolean(SAVED_EXTRA_EDIT);
@@ -82,6 +88,9 @@ public class UserFragment extends Fragment implements UsuariosContrato.View {
         setupVariaveisFindViewById();
         insereToolbar();
 
+      //  hintAnimation.setEnabled(true);
+        
+
         assert view != null;
         presenter = new UsuariosPresenter(this, getContext());
         presenter.setupOrganizacaoDeExibicao(vazio, user);
@@ -89,6 +98,7 @@ public class UserFragment extends Fragment implements UsuariosContrato.View {
 
         return view;
     }
+
 
     @Override
     public void executaAcaoBotaoSalvar(){
@@ -128,6 +138,7 @@ public class UserFragment extends Fragment implements UsuariosContrato.View {
     @Override
     public void setItemNaoSelecionado(int visibilidade) {
         tv_item_nao_selecionado.setVisibility(visibilidade);
+
     }
 
     @Override
@@ -144,7 +155,12 @@ public class UserFragment extends Fragment implements UsuariosContrato.View {
         name = view.findViewById(R.id.et_nome);
         email = view.findViewById(R.id.et_email);
         phone = view.findViewById(R.id.et_telefone);
+        hintAnimationNome = view.findViewById(R.id.hintAnimationNome);
+        hintAnimationEmail = view.findViewById(R.id.hintAnimationEmail);
+        hintAnimationPhone = view.findViewById(R.id.hintAnimationPhone);
     }
+
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -201,6 +217,8 @@ public class UserFragment extends Fragment implements UsuariosContrato.View {
         name.setEnabled(modo);
         email.setEnabled(modo);
         phone.setEnabled(modo);
+
+
     }
 
     @Override
@@ -210,6 +228,9 @@ public class UserFragment extends Fragment implements UsuariosContrato.View {
         name.setVisibility(View.INVISIBLE);
         email.setVisibility(View.INVISIBLE);
         phone.setVisibility(View.INVISIBLE);
+        hintAnimationEmail.setVisibility(View.INVISIBLE);
+        hintAnimationPhone.setVisibility(View.INVISIBLE);
+        hintAnimationNome.setVisibility(View.INVISIBLE);
     }
 
     @Override

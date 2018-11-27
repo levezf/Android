@@ -34,7 +34,7 @@
             >
         </FrameLayout>
         <FrameLayout
-            android:background="@android:color/holo_blue_dark"
+            android:background="@android:color/darker_gray"
             android:id="@+id/fragment_details"
             android:layout_weight="2"
             android:layout_width="0dp"
