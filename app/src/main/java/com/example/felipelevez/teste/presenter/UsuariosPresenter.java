@@ -20,7 +20,6 @@ public class UsuariosPresenter implements UsuariosContrato.Presenter {
     public void executaAcaoBotaoSalvar(User user, boolean nameEnable) {
             if (nameEnable) {
                 view.setEnableEditText(false);
-
                 if (ehNovoUsuario(user)) {
                     usuariosModel.insereUsuarioNoBanco(user);
                 } else {
