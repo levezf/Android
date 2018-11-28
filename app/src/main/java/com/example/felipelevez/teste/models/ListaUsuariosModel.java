@@ -19,11 +19,19 @@ public class ListaUsuariosModel implements ListaUsuariosContrato.Model {
 
     @Override
     public void getAllUsers(){
-        new AsyncTaskListaUsuarios().execute();
+        new AsyncTaskListaUsuarios(presenter, userDAO).execute();
     }
 
-    @SuppressLint("StaticFieldLeak")
-    public class AsyncTaskListaUsuarios extends AsyncTask<Void, Void, ArrayList<User>> {
+
+    public static class AsyncTaskListaUsuarios extends AsyncTask<Void, Void, ArrayList<User>> {
+
+        private final ListaUsuariosContrato.Presenter presenter;
+        private final UserDAO userDAO;
+
+        public AsyncTaskListaUsuarios(ListaUsuariosContrato.Presenter presenter, UserDAO userDAO){
+            this.presenter = presenter;
+            this.userDAO = userDAO;
+        }
 
 
         @Override
