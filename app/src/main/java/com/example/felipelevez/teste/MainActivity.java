@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (getResources().getBoolean(R.bool.twoPaneMode)) {
+        if (ehTabletSW600()) {
 
             if(savedInstanceState == null){
                 inflaFragment(ListFragment.newInstance(), R.id.fragment_lista);
@@ -38,6 +38,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private boolean ehTabletSW600(){
+        return getResources().getBoolean(R.bool.twoPaneMode);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -46,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(getResources().getBoolean(R.bool.twoPaneMode)) finish();
+        if(ehTabletSW600()) finish();
         super.onBackPressed();
     }
 

@@ -271,22 +271,28 @@ public class UserFragment extends Fragment implements UsuariosContrato.View {
 
     private boolean temCamposNulos(EditText e1, EditText e2, EditText e3, boolean mErro) {
 
-        if (e1.getText().toString().equals("")){
-            if(mErro)
-                e1.setError(getString(R.string.msg_campo_nao_nulo));
+        String edit1 = e1.getText().toString();
+        String edit2 = e2.getText().toString();
+        String edit3 = e3.getText().toString();
+
+        if(edit1.isEmpty() || edit2.isEmpty() || edit3.isEmpty()) {
+            if (edit1.isEmpty()) {
+                if (mErro)
+                    e1.setError(getString(R.string.msg_campo_nao_nulo));
+            }
+            if (edit2.isEmpty()) {
+                if (mErro)
+                    e2.setError(getString(R.string.msg_campo_nao_nulo));
+            }
+            if (edit3.isEmpty()) {
+                if (mErro)
+                    e3.setError(getString(R.string.msg_campo_nao_nulo));
+            }
             return true;
-        }
-        if (e2.getText().toString().equals("")) {
-            if(mErro)
-                e2.setError(getString(R.string.msg_campo_nao_nulo));
-            return true;
-        }
-        if (e3.getText().toString().equals("")) {
-            if(mErro)
-                e3.setError(getString(R.string.msg_campo_nao_nulo));
-            return true;
+
         }
         return false;
+
     }
 
 

@@ -21,7 +21,7 @@ public class UsuariosPresenter implements UsuariosContrato.Presenter {
             if (nameEnable) {
                 view.setEnableEditText(false);
 
-                if (user.getId() == -1) {
+                if (ehNovoUsuario(user)) {
                     usuariosModel.insereUsuarioNoBanco(user);
                 } else {
                     usuariosModel.atualizaUsuarioNoBanco(user);
@@ -30,10 +30,13 @@ public class UsuariosPresenter implements UsuariosContrato.Presenter {
             view.voltar();
 
     }
+    private boolean ehNovoUsuario(User user){
+        return user.getId() == -1;
+    }
 
     @Override
     public void executaAcaoBotaoDeletar(User user){
-        if(!(user.getId() == -1)){
+        if(!ehNovoUsuario(user)){
             usuariosModel.removeUsuarioDoBanco(user);
         }
     }
@@ -44,7 +47,7 @@ public class UsuariosPresenter implements UsuariosContrato.Presenter {
             view.adicionaMaskTelefone();
             view.setItemNaoSelecionado(View.INVISIBLE);
 
-            if (user.getId() == -1) {
+            if (ehNovoUsuario(user)) {
                 view.setEnableEditText(true);
             } else {
                 view.insereValoresNosEditText();
