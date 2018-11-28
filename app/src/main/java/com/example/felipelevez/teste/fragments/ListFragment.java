@@ -47,7 +47,6 @@ public class ListFragment extends Fragment implements ListaUsuariosContrato.View
         return new ListFragment();
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -13,8 +13,7 @@ public class ListaUsuariosPresenter implements ListaUsuariosContrato.Presenter {
 
     private ListaUsuariosContrato.View view;
     private ListaUsuariosModel listaUsuariosModel;
-    private UserDAO userDao;
-    public ArrayList<User> mItems;
+
 
     public ListaUsuariosPresenter(ListaUsuariosContrato.View view, Context context) {
         this.view = view;

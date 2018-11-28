@@ -151,8 +151,6 @@ public class UserFragment extends Fragment implements UsuariosContrato.View {
         hintAnimationPhone = view.findViewById(R.id.hintAnimationPhone);
     }
 
-
-
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
